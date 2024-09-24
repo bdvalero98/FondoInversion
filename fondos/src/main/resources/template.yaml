@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Despliegue de la aplicación de fondos en AWS
+
+Resources:
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP and SSH access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: YOUR_KEY_PAIR_NAME
+      ImageId: ami-0c55b159cbfafe1f0  # Reemplaza con la AMI de tu región
+      SecurityGroupIds:
+        - !Ref MySecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          aws s3 cp s3://pactualfondos/app.jar /home/ec2-user/app.jar
+          java -jar /home/ec2-user/app.jar
+
+Outputs:
+  InstancePublicIP:
+    Description: "IP pública de la instancia"
+    Value: !GetAtt MyInstance.PublicIp

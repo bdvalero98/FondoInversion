@@ -38,7 +38,7 @@ public class VisitanService {
                         "Visita con ID: " + idVisita + " no existe."));
     }
 
-    public Visitan regisrarVisita(Visitan visitan) throws ClienteNotFoundException {
+    public Visitan registrarVisita(Visitan visitan) throws ClienteNotFoundException {
         Cliente cliente = clienteRepository.findById(visitan.getCliente().getIdCliente())
                 .orElseThrow(() -> new ClienteNotFoundException(
                         "Cliente con ID: " + visitan.getCliente().getIdCliente() + " no existe."));
